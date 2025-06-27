@@ -10,7 +10,7 @@ def run_random_forest(
     models_path="models/"
 ):
     # 📦 Cargar datos de entrenamiento y prueba
-    x_train, y_train, feature_names = joblib.load(os.path.join(data_path, "train_balanced.pkl"))
+    x_train, y_train, feature_names = joblib.load(os.path.join(data_path, "train.pkl"))
     x_test, y_test, _ = joblib.load(os.path.join(data_path, "test.pkl"))
 
     # 🔁 Aplanar entradas si están expandidas (para audio)
