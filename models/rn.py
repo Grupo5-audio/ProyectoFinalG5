@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 from models.metrics import metrics_values
 
 def run_rn(
-    data_path="/src/",
-    models_path="/models/"
+    data_path="src/",
+    models_path="models/"
 ):
     # 📦 Cargar datos de entrenamiento y prueba
     x_train, y_train, feature_names = joblib.load(os.path.join(data_path, "train.pkl"))
@@ -51,9 +51,9 @@ def run_rn(
     plt.show()
 
     # 💾 Guardar modelo entrenado
-    model_path = os.path.join(models_path, "svm_model.pkl")
+    model_path = os.path.join(models_path, "rn_model.pkl")
     joblib.dump(model, model_path)
-    print(f"📦 Modelo SVM guardado en: {model_path}")
+    print(f"📦 Modelo Red Neuronal guardado en: {model_path}")
 
     # 🔍 Hacer predicciones
     y_pred = model.predict(x_test)
