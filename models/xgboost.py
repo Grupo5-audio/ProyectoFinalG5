@@ -41,18 +41,19 @@ def run_xgboost(
     param_grid = {
         'n_estimators': [100, 200],
         'max_depth': [6, 10],
-        'learning_rate': [0.1, 0.01],
-        'subsample': [0.8, 1.0]
+        'learning_rate': [0.1, 0.01]
     }
 
-    print("🔍 Buscando mejores hiperparámetros con GridSearchCV...")
-    grid = GridSearchCV(
-        estimator=XGBClassifier(objective='multi:softmax', num_class=len(class_names), eval_metric='mlogloss', use_label_encoder=False, random_state=42),
-        param_grid=param_grid,
-        cv=3,
-        scoring='accuracy',
-        n_jobs=-1,
-        verbose=1
+    print("🔍 Buscando mejores hiperparámetros con RandomizedSearchCV...")
+    grid = RandomizedSearchCV(
+    estimator=XGBClassifier(use_label_encoder=False, eval_metric='mlogloss'),
+    param_distributions=param_dist,
+    n_iter=4,  # solo 4 combinaciones al azar
+    scoring='accuracy',
+    cv=3,
+    n_jobs=-1,
+    verbose=1,
+    random_state=42
     )
 
     grid.fit(x_combined, y_combined)
