@@ -45,7 +45,7 @@ def run_svm(
 
     print("🔍 Ejecutando GridSearchCV para SVM...")
     grid = GridSearchCV(
-        estimator=SVC(probability=True, random_state=42),
+        estimator=SVC(probability=False, random_state=42),
         param_grid=param_grid,
         scoring='accuracy',
         cv=3,
