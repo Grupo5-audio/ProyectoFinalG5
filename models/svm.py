@@ -38,9 +38,9 @@ def run_svm(
 
     # 🔍 Definir grid de parámetros
     param_grid = {
-        'C': [0.1, 1, 10],
-        'kernel': ['linear', 'rbf', 'poly'],
-        'gamma': ['scale', 'auto']
+    'C': [1, 10],                # Menos valores
+    'kernel': ['linear', 'rbf'], # Elimina 'poly' que es muy lento
+    'gamma': ['scale']           # Solo una opción
     }
 
     print("🔍 Ejecutando GridSearchCV para SVM...")
