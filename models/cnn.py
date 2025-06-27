@@ -64,7 +64,7 @@ def ejecutar_modelo_cnn(data_path="src/",
   model.add(Dense(64, activation='relu', kernel_regularizer=l2(0.001)))
   model.add(Dropout(0.3))
   model.add(Flatten())
-  model.add(Dense(8, activation='softmax'))
+  model.add(Dense(6, activation='softmax'))
 
   # Compilar el modelo antes de entrenarlo
   # Compilar el modelo con una tasa de aprendizaje ajustada
