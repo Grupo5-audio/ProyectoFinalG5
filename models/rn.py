@@ -37,7 +37,7 @@ def run_rn(
     model.add(Flatten())
     model.add(Dense(256, activation='relu'))
     model.add(Dropout(0.5))
-    model.add(Dense(8, activation='softmax'))  # Ajustar según el número de clases
+    model.add(Dense(6, activation='softmax'))  # Ajustar según el número de clases
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
     history = model.fit(x_train, y_train, epochs=20, batch_size=32, validation_data=(x_test, y_test), callbacks=[ReduceLROnPlateau()])
 
