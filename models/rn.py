@@ -1,9 +1,10 @@
-from sklearn.svm import SVC
 import joblib
 import numpy as np
 import os
 import matplotlib.pyplot as plt
 from models.metrics import metrics_values
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Input, Dense, Dropout, Conv1D, MaxPooling1D, Flatten
 
 def run_rn(
     data_path="src/",
