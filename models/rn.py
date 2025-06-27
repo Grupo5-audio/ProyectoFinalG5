@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from models.metrics import metrics_values
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Input, Dense, Dropout, Conv1D, MaxPooling1D, Flatten
+from tensorflow.keras.callbacks import ReduceLROnPlateau
 
 def run_rn(
     data_path="src/",
