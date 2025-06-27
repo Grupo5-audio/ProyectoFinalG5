@@ -47,14 +47,24 @@ def load_ravdess_dataset(ravdess_path):
     path_df = pd.DataFrame(file_path, columns=['Path'])
     df = pd.concat([emotion_df, path_df], axis=1)
 
+    # Mapear emociones numéricas a etiquetas
     df.replace({'Emotions': {
-        1: 'neutral', 2: 'calma', 3: 'felicidad', 4: 'triste',
+        1: 'neutral', 2: 'neutral',  # Combinar neutral (1) y calma (2)
+        3: 'felicidad', 4: 'triste',
         5: 'enojado', 6: 'miedo', 7: 'desagrado', 8: 'sorprendido'
     }}, inplace=True)
 
+    # Eliminar la emoción "sorprendido"
+    df = df[df['Emotions'] != 'sorprendido']
+
+    # Resetear índices después del filtrado
+    df.reset_index(drop=True, inplace=True)
+
+    # Estadísticas
     total = len(df)
     emociones_unicas = df['Emotions'].nunique()
     lista_emociones = df['Emotions'].unique().tolist()
+
     return df, total, emociones_unicas, lista_emociones
 
 #cargamos los datos de la fuente de CREMA. Recibe como parámetro la ruta donde se encuentran los archivos.
@@ -126,7 +136,11 @@ def load_tess_dataset(tess_path):
     emotion_df = pd.DataFrame(emociones_traducidas, columns=['Emotions'])
     path_df = pd.DataFrame(file_path, columns=['Path'])
     df = pd.concat([emotion_df, path_df], axis=1)
-
+    
+    # Eliminar registros con emoción "sorprendido"
+    df = df[df['Emotions'] != 'sorprendido']
+    df.reset_index(drop=True, inplace=True)
+    
     # Datos resumidos
     total = len(df)
     emociones_unicas = df['Emotions'].nunique()
@@ -166,7 +180,11 @@ def load_savee_dataset(savee_path):
     # dataframe for path of files.
     path_df = pd.DataFrame(file_path, columns=['Path'])
     df = pd.concat([emotion_df, path_df], axis=1)
-
+    
+    # Eliminar registros con emoción "sorprendido"
+    df = df[df['Emotions'] != 'sorprendido']
+    df.reset_index(drop=True, inplace=True)
+    
     total = len(df)
     emociones_unicas = df['Emotions'].nunique()
     lista_emociones = df['Emotions'].unique().tolist()
