@@ -1,6 +1,6 @@
 from models.metrics import metrics_values
 from xgboost import XGBClassifier
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import RandomizedSearchCV
 import os
 import numpy as np
 import joblib
