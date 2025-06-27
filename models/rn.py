@@ -64,6 +64,6 @@ def run_rn(
     y_pred_labels = np.argmax(y_pred, axis=1)
     y_test_labels = np.argmax(y_test, axis=1)
 
-    metrics_values(y_test_labels, y_pred, class_names)
+    metrics_values(y_pred_labels, y_pred, class_names)
     
     return model, x_test, feature_names
