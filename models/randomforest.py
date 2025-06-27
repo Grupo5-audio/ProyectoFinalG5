@@ -9,20 +9,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-def metrics_values(y_true, y_pred, class_names):
-    print("\n📊 Informe de clasificación:")
-    print(classification_report(y_true, y_pred, target_names=class_names, zero_division=0))
-
-    cm = confusion_matrix(y_true, y_pred)
-    cm_df = pd.DataFrame(cm, index=class_names, columns=class_names)
-    plt.figure(figsize=(10, 8))
-    sns.heatmap(cm_df, annot=True, fmt='d', cmap='Blues')
-    plt.title('🔍 Matriz de confusión')
-    plt.xlabel('Predicción')
-    plt.ylabel('Etiqueta real')
-    plt.show()
-
-def run_random_forest_gridsearch(
+def run_random_forest(
     data_path="src/",
     models_path="models/"
 ):
