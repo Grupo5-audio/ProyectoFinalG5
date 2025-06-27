@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 from models.metrics import metrics_values
 
 def run_rn(
-    data_path="/content/drive/MyDrive/Colab Notebooks/ProyectoFinal/src/",
-    models_path="/content/drive/MyDrive/Colab Notebooks/ProyectoFinal/models/"
+    data_path="/src/",
+    models_path="/models/"
 ):
     # 📦 Cargar datos de entrenamiento y prueba
     x_train, y_train, feature_names = joblib.load(os.path.join(data_path, "train.pkl"))
