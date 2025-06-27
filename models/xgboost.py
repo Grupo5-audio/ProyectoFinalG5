@@ -47,7 +47,7 @@ def run_xgboost(
     print("🔍 Buscando mejores hiperparámetros con RandomizedSearchCV...")
     grid = RandomizedSearchCV(
     estimator=XGBClassifier(use_label_encoder=False, eval_metric='mlogloss'),
-    param_distributions=param_dist,
+    param_distributions=param_grid,
     n_iter=4,  # solo 4 combinaciones al azar
     scoring='accuracy',
     cv=3,
