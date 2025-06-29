@@ -204,34 +204,11 @@ def explore_data(df):
     sns.despine()
     plt.show()
 
-#Extrae los features de los audios. Es decir extrae las características de los audios 
-def extract_features(data, sample_rate):
-    result = np.array([])
-
-    #Extrae 2 características: media y desviación estándar de esa única banda, total 2 características
-    zcr = librosa.feature.zero_crossing_rate(y=data)
-    result = np.hstack((result, np.mean(zcr), np.std(zcr)))
-
-    #Extrae 12 medias y 12 desviaciones estándar, total 24 características
-    stft = np.abs(librosa.stft(data))
-    chroma = librosa.feature.chroma_stft(S=stft, sr=sample_rate)
-    result = np.hstack((result, np.mean(chroma, axis=1), np.std(chroma, axis=1)))
-
-    #Extrae 40 medias y 40 desviaciones estándar, total 80 características
-    mfccs = librosa.feature.mfcc(y=data, sr=sample_rate, n_mfcc=40)
-    result = np.hstack((result, np.mean(mfccs, axis=1), np.std(mfccs, axis=1)))
-
-    #Extraes 2 características: media y desviación estándar, total 2 características
-    rms = librosa.feature.rms(y=data)
-    result = np.hstack((result, np.mean(rms), np.std(rms)))
-
-    #Extraes 128 medias y 128 desviaciones estándar, total 256 características
-    mel = librosa.feature.melspectrogram(y=data, sr=sample_rate)
-    mel_db = librosa.power_to_db(mel, ref=np.max)
-    result = np.hstack((result, np.mean(mel_db, axis=1), np.std(mel_db, axis=1)))
-
-    return result
-
+def extract_mel_spectrogram(data, sample_rate, n_mels=128, n_fft=2048, hop_length=512):
+    mel_spec = librosa.feature.melspectrogram(y=data, sr=sample_rate, n_mels=n_mels, n_fft=n_fft, hop_length=hop_length)
+    mel_db = librosa.power_to_db(mel_spec, ref=np.max)
+    return mel_db  # Esto es una matriz 2D: (n_mels, time_frames)
+    
 # Esta función define los nombres de las características con el propósito de identificarlas
 # y posteriormente analizar las que tienen mayor importancia
 def get_feature_names():
@@ -257,32 +234,24 @@ def get_feature_names():
 
     return names
 
-#Carga 2.5 segundos de audio a partir del segundo 0.6 desde un archivo. Esto con el objetivo de estandarizar
-#Extrae características del audio usando la función extract_features definida anteriormente
-#Devuelve el vector de características.·
 def get_features(path):
     data, sample_rate = librosa.load(path, duration=2.5, offset=0.6)
-    return extract_features(data, sample_rate)
-
+    mel_db = extract_mel_spectrogram(data, sample_rate)
+    return mel_db
+    
 #Función que hace la llamada a las funciones que obtienen los features y los nombres de los features.
 def process_dataset(df):
-    X, Y = [], []
+    X = []
+    Y = []
     for path, emotion in zip(df.Path, df.Emotions):
-        feature = get_features(path)
-        X.append(feature)
+        mel_db = get_features(path)
+        X.append(mel_db)
         Y.append(emotion)
 
-    # ✅ Obtener nombres de las columnas
-    feature_names = get_feature_names()
+    X = np.array(X)  # Aquí X será (num_samples, n_mels, time_frames)
+    Y_encoded, encoder = encode_labels(Y, 'src/')
 
-    # Crear DataFrame con nombres reales
-    features_df = pd.DataFrame(X, columns=feature_names)
-    features_df['Emotions'] = Y
-
-    # Guardar a CSV
-    features_df.to_csv('src/features.csv', index=False)
-
-    return features_df
+    return X, Y_encoded
 
 # convierte etiquetas categóricas (como emociones) a formato one-hot, que es el formato que suelen requerir 
 # los modelos de machine learning y almacena las categorías en el archivo class_labels.npy
