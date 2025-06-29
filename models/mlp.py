@@ -67,7 +67,7 @@ def run_mlp(
     )
 
     # 💾 Guardar modelo
-    model_path = os.path.join(models_path, "mlp_best.h5")
+    model_path = os.path.join(models_path, "mlp_best.pkl")
     model.save(model_path)
     print(f"📦 Modelo MLP guardado en: {model_path}")
 
