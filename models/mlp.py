@@ -36,19 +36,19 @@ def run_mlp(
     model = models.Sequential([
         layers.Input(shape=(input_dim,)),
         layers.Dense(512, activation='relu'),
-        layers.BatchNormalization(),
-        layers.Dropout(0.4),
-        layers.Dense(256, activation='relu'),
-        layers.BatchNormalization(),
+        #layers.BatchNormalization(),
         layers.Dropout(0.3),
-        layers.Dense(128, activation='relu'),
+        layers.Dense(256, activation='relu'),
+        #layers.BatchNormalization(),
         layers.Dropout(0.2),
+        layers.Dense(128, activation='relu'),
+        #layers.Dropout(0.2),
         layers.Dense(n_classes, activation='softmax')
     ])
 
     model.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=0.0005),
-        loss='categorical_crossentropy',
+        loss=CategoricalFocalLoss(gamma=2.0),#'categorical_crossentropy',
         metrics=['accuracy']
     )
 
