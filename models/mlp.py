@@ -32,6 +32,13 @@ def run_mlp(
     n_classes = y_train.shape[1]
     input_dim = x_train.shape[1]
 
+    # ⭐ Aplicar selección de características
+    from sklearn.feature_selection import SelectKBest, f_classif
+    selector = SelectKBest(f_classif, k=200)
+    x_train = selector.fit_transform(x_train, y_train_labels)
+    x_val = selector.transform(x_val)
+    x_test = selector.transform(x_test)
+
     # 🧠 Construir MLP
     model = models.Sequential([
         layers.Input(shape=(input_dim,)),
