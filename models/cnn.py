@@ -51,37 +51,90 @@ def ejecutar_modelo_cnn(data_path="src/",
   y_test_labels = np.argmax(y_test, axis=1)
 
   # Definición del modelo
-  model = Sequential()
-  model.add(Input(shape=(x_train.shape[1], 1)))
+  # model = Sequential()
+  # model.add(Input(shape=(x_train.shape[1], 1)))
 
-  # Aplicando Regularización L2
-  model = Sequential()
-  model.add(Input(shape=(x_train.shape[1], 1)))
-  model.add(Dense(256, activation='relu', kernel_regularizer=l2(0.001)))
-  model.add(Dropout(0.3))
-  model.add(Dense(128, activation='relu', kernel_regularizer=l2(0.001)))
-  model.add(Dropout(0.3))
-  model.add(Dense(64, activation='relu', kernel_regularizer=l2(0.001)))
-  model.add(Dropout(0.3))
-  model.add(Flatten())
-  model.add(Dense(6, activation='softmax'))
+#   # Aplicando Regularización L2
+#   model = Sequential()
+#   model.add(Input(shape=(x_train.shape[1], 1)))
+#   model.add(Dense(256, activation='relu', kernel_regularizer=l2(0.001)))
+#   model.add(Dropout(0.3))
+#   model.add(Dense(128, activation='relu', kernel_regularizer=l2(0.001)))
+#   model.add(Dropout(0.3))
+#   model.add(Dense(64, activation='relu', kernel_regularizer=l2(0.001)))
+#   model.add(Dropout(0.3))
+#   model.add(Flatten())
+#   model.add(Dense(6, activation='softmax'))
 
-  # Compilar el modelo antes de entrenarlo
-  # Compilar el modelo con una tasa de aprendizaje ajustada
-  optimizer = Adam(learning_rate=0.0001)
-  model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
+  print("Forma de x_train:", x_train.shape)
+
+  if len(x_train.shape) == 2:
+    x_train = np.expand_dims(x_train, axis=2)
+
+  input_shape = (x_train.shape[1], x_train.shape[2])
+
+  # Parámetro de regularización L2
+  l2_lambda = 0.001
+
+  # Definir modelo con L2
+  model = Sequential([
+    Input(shape=input_shape),
+    Conv1D(128, kernel_size=5, padding='same', activation='relu',
+        kernel_regularizer=l2(l2_lambda)),
+    BatchNormalization(),
+    MaxPooling1D(pool_size=2),
+    Dropout(0.3),
+    Conv1D(64, kernel_size=5, padding='same', activation='relu',
+        kernel_regularizer=l2(l2_lambda)),
+    BatchNormalization(),
+    MaxPooling1D(pool_size=2),
+    Dropout(0.3),
+    Conv1D(32, kernel_size=3, padding='same', activation='relu',
+        kernel_regularizer=l2(l2_lambda)),
+    BatchNormalization(),
+    Flatten(),
+    Dense(64, activation='relu', kernel_regularizer=l2(l2_lambda)),
+    Dropout(0.3),
+    Dense(6, activation='softmax')  # 6 clases
+    ])
+
+    # Compilación del modelo
+  model.compile(
+        optimizer=Adam(learning_rate=1e-3),
+        loss='categorical_crossentropy',
+        metrics=['accuracy']
+    )
+  
+  # Callbacks para control de sobreajuste
+  early_stop = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+  reduce_lr = ReduceLROnPlateau(monitor='val_loss', patience=5, factor=0.5)
+
   model.summary()
 
-
+  
   model_cnn = model
   tf.keras.utils.plot_model(model_cnn, rankdir='LR',show_dtype=True)
-  rlrp = ReduceLROnPlateau(monitor='loss', factor=0.4, verbose=0, patience=2, min_lr=0.0000000005)
-  history=model_cnn.fit(x_train, y_train, batch_size=64, epochs=50, validation_data=(x_test, y_test), callbacks=[rlrp])
+
+# Entrenamiento
+  history = model_cnn.fit(
+        x_train, y_train,
+        epochs=100,
+        batch_size=32,
+        #validation_split=0.2,
+        validation_data=(x_test, y_test),
+        callbacks=[early_stop, reduce_lr]
+    )
+  
+#   model_cnn = model
+#   tf.keras.utils.plot_model(model_cnn, rankdir='LR',show_dtype=True)
+#   rlrp = ReduceLROnPlateau(monitor='loss', factor=0.4, verbose=0, patience=2, min_lr=0.0000000005)
+#   history=model_cnn.fit(x_train, y_train, batch_size=64, epochs=50, validation_data=(x_test, y_test), callbacks=[rlrp])
 
   # 💾 Guardar modelo entrenado
   model_path = os.path.join(models_path, "cnn.pkl")
   joblib.dump(model_cnn, model_path)
   print(f"📦 Modelo guardado en: {model_path}")
+  
   #grafico_perdida(history)
 
   plt.figure(figsize=(12, 4))
