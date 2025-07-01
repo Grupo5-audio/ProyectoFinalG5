@@ -20,7 +20,7 @@ from tensorflow.keras.layers import Input, Dense, Dropout, Flatten
 from tensorflow.keras.callbacks import ReduceLROnPlateau
 
 import keras
-from keras.callbacks import ReduceLROnPlateau
+from keras.callbacks import ReduceLROnPlateau, EarlyStopping
 from keras.models import Sequential
 from keras.layers import Dense, Conv1D, MaxPooling1D, Flatten, Dropout, BatchNormalization
 from keras.optimizers import Adam
