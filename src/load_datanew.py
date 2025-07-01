@@ -204,6 +204,25 @@ def explore_data(df):
     sns.despine()
     plt.show()
 
+#Funciones para aumentar datos sintéticos
+def noise(data):
+    noise_amp = 0.035*np.random.uniform()*np.amax(data)
+    data = data + noise_amp*np.random.normal(size=data.shape[0])
+    return data
+
+def stretch(data, rate=0.8):
+    """Stretches the audio data by the given rate."""
+    return librosa.effects.time_stretch(data, rate=rate) # Pass rate as a keyword argument
+
+def shift(data):
+    shift_range = int(np.random.uniform(low=-5, high = 5)*1000)
+    return np.roll(data, shift_range)
+
+def pitch(data, sampling_rate, pitch_factor=0.7):
+    #return librosa.effects.pitch_shift(data, sampling_rate, pitch_factor)
+    return librosa.effects.pitch_shift(y=data, sr=sampling_rate, n_steps=pitch_factor)
+
+
 #Extrae los features de los audios. Es decir extrae las características de los audios 
 def extract_features(data, sample_rate):
     result = np.array([])
@@ -262,15 +281,38 @@ def get_feature_names():
 #Devuelve el vector de características.·
 def get_features(path):
     data, sample_rate = librosa.load(path, duration=2.5, offset=0.6)
-    return extract_features(data, sample_rate)
+
+    # sin aumento
+    res1 = extract_features(data, sample_rate)
+    result = np.array(res1)
+
+    # datos con ruido
+    noise_data = noise(data)
+    res2 = extract_features(noise_data, sample_rate)
+    result = np.vstack((result, res2)) # stacking vertically
+
+    # datos con estiramiento 
+    new_data = stretch(data)
+    data_stretch_pitch = pitch(new_data, sample_rate)
+    res3 = extract_features(data_stretch_pitch, sample_rate)
+    result = np.vstack((result, res3)) # stacking vertically
+    
+    return result
+
 
 #Función que hace la llamada a las funciones que obtienen los features y los nombres de los features.
 def process_dataset(df):
     X, Y = [], []
+
+    print("Obtiene caracterisitacas.... ")
     for path, emotion in zip(df.Path, df.Emotions):
         feature = get_features(path)
-        X.append(feature)
-        Y.append(emotion)
+        print(f"path: {path} emocion: {emotion} feature")
+        for ele in feature:
+            X.append(ele)
+            Y.append(emotion)
+
+    print("finaliza la obtención de características....")
 
     # ✅ Obtener nombres de las columnas
     feature_names = get_feature_names()
