@@ -318,17 +318,17 @@ def run_pipeline(ravdess_path=None, crema_path=None, tess_path=None, savee_path=
     #grafico_perdida(history)
 
 
-Ravdess = "C:/Users/andra/.cache/kagglehub/datasets/uwrfkaggler/ravdess-emotional-speech-audio/versions/1/audio_speech_actors_01-24/"
-Crema = "C:/Users/andra/.cache/kagglehub/datasets/ejlok1/cremad/versions/1/AudioWAV/"
-Tess = "C:/Users/andra/.cache/kagglehub/datasets/ejlok1/toronto-emotional-speech-set-tess/versions/1/TESS Toronto emotional speech set data/TESS Toronto emotional speech set data/"
-Savee = "C:/Users/andra/.cache/kagglehub/datasets/ejlok1/surrey-audiovisual-expressed-emotion-savee/versions/1/ALL/"
+#Ravdess = "C:/Users/andra/.cache/kagglehub/datasets/uwrfkaggler/ravdess-emotional-speech-audio/versions/1/audio_speech_actors_01-24/"
+#Crema = "C:/Users/andra/.cache/kagglehub/datasets/ejlok1/cremad/versions/1/AudioWAV/"
+#Tess = "C:/Users/andra/.cache/kagglehub/datasets/ejlok1/toronto-emotional-speech-set-tess/versions/1/TESS Toronto emotional speech set data/TESS Toronto emotional speech set data/"
+#Savee = "C:/Users/andra/.cache/kagglehub/datasets/ejlok1/surrey-audiovisual-expressed-emotion-savee/versions/1/ALL/"
 
 # Ejecutar pipeline
-X, Y = run_pipeline(
-    ravdess_path=Ravdess,
-    crema_path=Crema,
-    tess_path=Tess,
-    savee_path=Savee
-)
+#X, Y = run_pipeline(
+#    ravdess_path=Ravdess,
+#    crema_path=Crema,
+#    tess_path=Tess,
+#    savee_path=Savee
+#)
 
 
