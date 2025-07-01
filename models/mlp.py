@@ -5,6 +5,22 @@ import tensorflow as tf
 from tensorflow.keras import layers, models, callbacks
 from sklearn.metrics import classification_report
 from models.metrics import metrics_values
+#from models.loss import CategoricalFocalLoss # Import the custom loss function
+
+# Define the CategoricalFocalLoss class directly
+class CategoricalFocalLoss(tf.keras.losses.Loss):
+    def __init__(self, gamma=2.0, alpha=0.25, name='categorical_focal_loss'):
+        super().__init__(name=name)
+        self.gamma = gamma
+        self.alpha = alpha
+
+    def call(self, y_true, y_pred):
+        epsilon = tf.keras.backend.epsilon()
+        y_pred = tf.clip_by_value(y_pred, epsilon, 1. - epsilon)
+        cross_entropy = -y_true * tf.math.log(y_pred)
+        loss = self.alpha * tf.pow(1 - y_pred, self.gamma) * cross_entropy
+        return tf.reduce_sum(loss, axis=-1)
+
 
 def run_mlp(
     data_path="src/",
@@ -32,16 +48,23 @@ def run_mlp(
     n_classes = y_train.shape[1]
     input_dim = x_train.shape[1]
 
+    # Convert one-hot encoded y to labels for feature selection
+    y_train_labels = np.argmax(y_train, axis=1)
+    y_val_labels = np.argmax(y_val, axis=1)
+    y_test_labels = np.argmax(y_test, axis=1)
+
+
     # ⭐ Aplicar selección de características
     from sklearn.feature_selection import SelectKBest, f_classif
     selector = SelectKBest(f_classif, k=200)
-    x_train = selector.fit_transform(x_train, y_train)
+    x_train = selector.fit_transform(x_train, y_train_labels) # Use y_train_labels for fit_transform
     x_val = selector.transform(x_val)
     x_test = selector.transform(x_test)
 
+
     # 🧠 Construir MLP
     model = models.Sequential([
-        layers.Input(shape=(input_dim,)),
+        layers.Input(shape=(x_train.shape[1],)), # Update input shape after feature selection
         layers.Dense(512, activation='relu'),
         #layers.BatchNormalization(),
         layers.Dropout(0.3),
@@ -65,8 +88,8 @@ def run_mlp(
     # 🚆 Entrenar
     print("🚀 Entrenando MLP...")
     history = model.fit(
-        x_train, y_train,
-        validation_data=(x_val, y_val),
+        x_train, y_train, # Use original y_train for training
+        validation_data=(x_val, y_val), # Use original y_val for validation
         epochs=100,
         batch_size=32,
         callbacks=[early_stop],
@@ -81,7 +104,7 @@ def run_mlp(
     # 🧪 Evaluación en test
     y_pred_probs = model.predict(x_test)
     y_pred_labels = np.argmax(y_pred_probs, axis=1)
-    y_test_labels = np.argmax(y_test, axis=1)
+    #y_test_labels = np.argmax(y_test, axis=1) # Already created y_test_labels earlier
 
     print("📈 Evaluación final en conjunto de prueba:")
     metrics_values(y_test_labels, y_pred_labels, class_names)
