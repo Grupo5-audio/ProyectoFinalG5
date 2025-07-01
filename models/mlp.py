@@ -35,7 +35,7 @@ def run_mlp(
     # ⭐ Aplicar selección de características
     from sklearn.feature_selection import SelectKBest, f_classif
     selector = SelectKBest(f_classif, k=200)
-    x_train = selector.fit_transform(x_train, y_train_labels)
+    x_train = selector.fit_transform(x_train, y_train)
     x_val = selector.transform(x_val)
     x_test = selector.transform(x_test)
 
