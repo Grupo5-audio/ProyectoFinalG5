@@ -30,7 +30,7 @@ def metrics_values(y_test_labels, y_pred, class_names):
     plt.figure(figsize=(8, 6))
     sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
                 xticklabels=class_names, yticklabels=class_names)
-    plt.title("Matriz de Confusión - Random Forest")
+    plt.title("Matriz de Confusión")
     plt.xlabel("Predicción")
     plt.ylabel("Real")
     plt.tight_layout()
