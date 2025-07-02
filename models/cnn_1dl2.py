@@ -58,6 +58,10 @@ def modelo_cnn_1DL2(data_path="src/", models_path="models/", epochs=50, batch_si
         x_train = x_train.reshape(x_train.shape[0], -1)
         x_test = x_test.reshape(x_test.shape[0], -1)
 
+        # Add channel dimension for CNN 1D
+    x_train = np.expand_dims(x_train, axis=-1)
+    x_test = np.expand_dims(x_test, axis=-1)
+
     # 🏷️ Cargar nombres de clases (emociones)
     class_labels_path = os.path.join(data_path, "class_labels.npy")
     if os.path.exists(class_labels_path):
