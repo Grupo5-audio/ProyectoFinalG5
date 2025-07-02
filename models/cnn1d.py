@@ -18,7 +18,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv1D, MaxPooling1D, Flatten, Dense, Dropout
+from tensorflow.keras.layers import Conv1D, MaxPooling1D, Flatten, Dense, Dropout, Input
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras.optimizers import Adam
 
@@ -57,6 +57,11 @@ def modelo_cnn_1D(data_path="src/", models_path="models/", epochs=50, batch_size
         x_train = x_train.reshape(x_train.shape[0], -1)
         x_test = x_test.reshape(x_test.shape[0], -1)
 
+    # Add channel dimension for CNN 1D
+    x_train = np.expand_dims(x_train, axis=-1)
+    x_test = np.expand_dims(x_test, axis=-1)
+
+
     # 🏷️ Cargar nombres de clases (emociones)
     class_labels_path = os.path.join(data_path, "class_labels.npy")
     if os.path.exists(class_labels_path):
@@ -70,7 +75,8 @@ def modelo_cnn_1D(data_path="src/", models_path="models/", epochs=50, batch_size
 
     # Crear el modelo CNN
     model = Sequential()
-    model.add(Conv1D(32, 3, activation='relu', input_shape=(x_train.shape[1], 1)))
+    model.add(Input(shape=(x_train.shape[1], 1))) # Corrected input shape
+    model.add(Conv1D(32, 3, activation='relu'))
     model.add(MaxPooling1D(2))
     model.add(Conv1D(64, 3, activation='relu'))
     model.add(MaxPooling1D(2))
@@ -99,18 +105,11 @@ def modelo_cnn_1D(data_path="src/", models_path="models/", epochs=50, batch_size
                         verbose=1,
                         callbacks=[early_stopping, lr_reduction])
 
-    # Evaluar el modelo
-    x_test_reshaped = x_test.reshape(x_test.shape[0], x_test.shape[1], 1)
-    y_pred = model.predict(x_test_reshaped)
-    y_pred_classes = np.argmax(y_pred, axis=1)
-    y_test_classes = np.argmax(y_test, axis=1)
-
-    # Evaluación del modelo
-    accuracy = model.evaluate(x_test_reshaped, y_test)[1] * 100
+    # Evaluate the model
+    accuracy = model.evaluate(x_test, y_test)[1] * 100 # Use x_test directly
     print(f"Accuracy of our model on test data: {accuracy:.2f} %")
 
     # Visualización de la pérdida y precisión
     grafico_perdida(history)
 
-    # Retornar el modelo y el historial
-    return model, history
+    return model, x_test, feature_names # Return model, x_test, and feature_names
