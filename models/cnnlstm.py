@@ -23,6 +23,7 @@ from keras.layers import Conv1D, MaxPooling1D, LSTM, Dense, Dropout, Flatten, Ti
 from keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau  # Importar ReduceLROnPlateau
 from keras.optimizers import Adam
 from keras.utils import to_categorical
+from models.metrics import metrics_values
 import tensorflow as tf
 from tensorflow.keras.regularizers import l2  # Importar la función de regularización L2
 from sklearn.metrics import accuracy_score, f1_score
@@ -127,11 +128,24 @@ def entrenar_modelo_cnn_lstm(data_path="src/", models_path="models/", epochs=50,
                         validation_data=(x_test, y_test),
                         callbacks=[checkpoint, early_stopping, reduce_lr])
 
-    # Evaluación del modelo
-    accuracy = model.evaluate(x_test, y_test)[1] * 100
+     # Visualización de la pérdida y precisión
+    grafico_perdida(history)
+    
+    # 💾 Guardar modelo
+    model_path = os.path.join(models_path, "cnn_lstm.keras")
+    model.save(model_path)
+    print(f"📦 Modelo CNN_LSTM guardado en: {model_path}")
+    
+    # Evaluate the model
+    accuracy = model.evaluate(x_test, y_test)[1] * 100 # Use x_test directly
     print(f"Accuracy of our model on test data: {accuracy:.2f} %")
 
-    # Visualización de la pérdida y precisión
-    grafico_perdida(history)
+    # 🧪 Evaluación en test
+    y_pred_probs = model.predict(x_test)
+    y_pred_labels = np.argmax(y_pred_probs, axis=1)
+    #y_test_labels = np.argmax(y_test, axis=1) # Already created y_test_labels earlier
 
-    return model, history  # Retornar el modelo y el historial
+    print("📈 Evaluación final en conjunto de prueba:")
+    metrics_values(y_test_labels, y_pred_labels, class_names)
+
+    return model, x_test, feature_names # Return model, x_test, and feature_names
