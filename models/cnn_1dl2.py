@@ -16,6 +16,7 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.regularizers import l2  # Importar la función de regularización L2
 from sklearn.metrics import accuracy_score, f1_score
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from models.metrics import metrics_values
 import os
 import joblib
 import numpy as np
@@ -74,48 +75,56 @@ def modelo_cnn_1DL2(data_path="src/", models_path="models/", epochs=50, batch_si
     y_test_labels = np.argmax(y_test, axis=1)
 
 
-model = Sequential()
-model.add(Conv1D(32, 3, activation='relu', input_shape=(x_train_balanced.shape[1], 1), kernel_regularizer=l2(0.01)))  # L2 regularization
-model.add(MaxPooling1D(2))
-model.add(Conv1D(64, 3, activation='relu', kernel_regularizer=l2(0.0001)))  # L2 regularization
-model.add(MaxPooling1D(2))
-model.add(Conv1D(128, 3, activation='relu', kernel_regularizer=l2(0.0001)))  # L2 regularization
-model.add(MaxPooling1D(2))
-model.add(Flatten())
-model.add(Dense(128, activation='relu', kernel_regularizer=l2(0.001)))  # L2 regularization
-model.add(Dropout(0.6))  # Aumentar dropout
-model.add(Dense(6, activation='softmax'))  # Cambiado a 6 para coincidir con el número de clases en y_train_balanced
+    model = Sequential()
+    model.add(Conv1D(32, 3, activation='relu', input_shape=(x_train.shape[1], 1), kernel_regularizer=l2(0.01)))  # L2 regularization
+    model.add(MaxPooling1D(2))
+    model.add(Conv1D(64, 3, activation='relu', kernel_regularizer=l2(0.0001)))  # L2 regularization
+    model.add(MaxPooling1D(2))
+    model.add(Conv1D(128, 3, activation='relu', kernel_regularizer=l2(0.0001)))  # L2 regularization
+    model.add(MaxPooling1D(2))
+    model.add(Flatten())
+    model.add(Dense(128, activation='relu', kernel_regularizer=l2(0.001)))  # L2 regularization
+    model.add(Dropout(0.6))  # Aumentar dropout
+    model.add(Dense(6, activation='softmax'))  # Cambiado a 6 para coincidir con el número de clases en y_train_balanced
 
-# Resumen del modelo
-model.summary()
+    # Resumen del modelo
+    model.summary()
 
-# Compilar el modelo
-model.compile(optimizer=Adam(learning_rate=0.0005), loss='categorical_crossentropy', metrics=['accuracy'])
+    # Compilar el modelo
+    model.compile(optimizer=Adam(learning_rate=0.0005), loss='categorical_crossentropy', metrics=['accuracy'])
 
-# Definir callbacks
-early_stopping = EarlyStopping(monitor='val_accuracy', patience=5, restore_best_weights=True)
-lr_reduction = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=3, min_lr=0.00001)
+    # Definir callbacks
+    early_stopping = EarlyStopping(monitor='val_accuracy', patience=5, restore_best_weights=True)
+    lr_reduction = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=3, min_lr=0.00001)
 
- # Entrenar el modelo
+    # Entrenar el modelo
     history = model.fit(x_train, y_train,
-                        validation_data=(x_test, y_test),
-                        epochs=epochs,
-                        batch_size=batch_size,
-                        verbose=1,
-                        callbacks=[early_stopping, lr_reduction])
+                            validation_data=(x_test, y_test),
+                            epochs=epochs,
+                            batch_size=batch_size,
+                            verbose=1,
+                            callbacks=[early_stopping, lr_reduction])
 
-# Evaluar el modelo
-x_test_reshaped = x_test.reshape(x_test.shape[0], x_test.shape[1], 1)
-y_pred = model.predict(x_test_reshaped)
-y_pred_classes = np.argmax(y_pred, axis=1)
-y_test_classes = np.argmax(y_test, axis=1)
 
-# Evaluación del modelo
-accuracy = model.evaluate(x_test_reshaped, y_test)[1] * 100
-print(f"Accuracy of our model on test data: {accuracy:.2f} %")
 
-   # Visualización de la pérdida y precisión
+    # Visualización de la pérdida y precisión
     grafico_perdida(history)
 
-    # Retornar el modelo y el historial
-    return model, history
+    # 💾 Guardar modelo
+    model_path = os.path.join(models_path, "cnn1d2L.keras")
+    model.save(model_path)
+    print(f"📦 Modelo CNN1D2L guardado en: {model_path}")
+
+    # Evaluate the model
+    accuracy = model.evaluate(x_test, y_test)[1] * 100 # Use x_test directly
+    print(f"Accuracy of our model on test data: {accuracy:.2f} %")
+
+    # 🧪 Evaluación en test
+    y_pred_probs = model.predict(x_test)
+    y_pred_labels = np.argmax(y_pred_probs, axis=1)
+    #y_test_labels = np.argmax(y_test, axis=1) # Already created y_test_labels earlier
+
+    print("📈 Evaluación final en conjunto de prueba:")
+    metrics_values(y_test_labels, y_pred_labels, class_names)
+
+    return model, x_test, feature_names # Return model, x_test, and feature_names
