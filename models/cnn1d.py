@@ -110,9 +110,9 @@ def modelo_cnn_1D(data_path="src/", models_path="models/", epochs=50, batch_size
     grafico_perdida(history)
     
     # 💾 Guardar modelo
-    model_path = os.path.join(models_path, "cnn1d.pkl")
+    model_path = os.path.join(models_path, "cnn1d.keras")
     model.save(model_path)
-    print(f"📦 Modelo MLP guardado en: {model_path}")
+    print(f"📦 Modelo CNN1D guardado en: {model_path}")
     
     # Evaluate the model
     accuracy = model.evaluate(x_test, y_test)[1] * 100 # Use x_test directly
