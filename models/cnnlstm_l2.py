@@ -20,6 +20,7 @@ from keras.layers import Conv1D, MaxPooling1D, LSTM, Dense, Dropout, Flatten, Ti
 from keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau  # Importar ReduceLROnPlateau
 from keras.optimizers import Adam
 from keras.utils import to_categorical
+from models.metrics import metrics_values
 import tensorflow as tf
 from tensorflow.keras.regularizers import l2  # Importar la función de regularización L2
 from sklearn.metrics import accuracy_score, f1_score
