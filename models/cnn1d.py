@@ -105,7 +105,11 @@ def modelo_cnn_1D(data_path="src/", models_path="models/", epochs=50, batch_size
                         verbose=1,
                         callbacks=[early_stopping, lr_reduction])
 
-     # 💾 Guardar modelo
+
+    # Visualización de la pérdida y precisión
+    grafico_perdida(history)
+    
+    # 💾 Guardar modelo
     model_path = os.path.join(models_path, "cnn1d.pkl")
     model.save(model_path)
     print(f"📦 Modelo MLP guardado en: {model_path}")
@@ -121,9 +125,5 @@ def modelo_cnn_1D(data_path="src/", models_path="models/", epochs=50, batch_size
 
     print("📈 Evaluación final en conjunto de prueba:")
     metrics_values(y_test_labels, y_pred_labels, class_names)
-
-
-    # Visualización de la pérdida y precisión
-    grafico_perdida(history)
 
     return model, x_test, feature_names # Return model, x_test, and feature_names
