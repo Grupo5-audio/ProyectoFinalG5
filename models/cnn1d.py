@@ -20,7 +20,7 @@ import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv1D, MaxPooling1D, Flatten, Dense, Dropout, Input
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from tensorflow.keras.optimizers import 
+from tensorflow.keras.optimizers import Adam
 from models.metrics import metrics_values
 
 def grafico_perdida(history):
