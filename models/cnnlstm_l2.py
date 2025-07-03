@@ -126,5 +126,22 @@ def entrenar_modelo_cnn_lstmL2(data_path="src/", models_path="models/", epochs=5
 
     # Visualización de la pérdida y precisión
     grafico_perdida(history)
+    
+    # 💾 Guardar modelo
+    model_path = os.path.join(models_path, "cnn_lstml2.keras")
+    model.save(model_path)
+    print(f"📦 Modelo CNN_LSTM guardado en: {model_path}")
+    
+    # Evaluate the model
+    accuracy = model.evaluate(x_test, y_test)[1] * 100 # Use x_test directly
+    print(f"Accuracy of our model on test data: {accuracy:.2f} %")
 
-    return model, history  # Retornar el modelo y el historial
+    # 🧪 Evaluación en test
+    y_pred_probs = model.predict(x_test)
+    y_pred_labels = np.argmax(y_pred_probs, axis=1)
+    #y_test_labels = np.argmax(y_test, axis=1) # Already created y_test_labels earlier
+
+    print("📈 Evaluación final en conjunto de prueba:")
+    metrics_values(y_test_labels, y_pred_labels, class_names)
+
+    return model, x_test, feature_names # Return model, x_test, and feature_names
