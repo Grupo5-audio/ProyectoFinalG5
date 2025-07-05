@@ -29,6 +29,30 @@ from models.metrics import metrics_values
 
 import joblib
 
+def grafico_perdida(history):
+    plt.figure(figsize=(12, 4))
+
+    # Pérdida
+    plt.subplot(1, 2, 1)
+    plt.plot(history.history['loss'], label='Pérdida de Entrenamiento')
+    plt.plot(history.history['val_loss'], label='Pérdida de Validación')
+    plt.title('Pérdida durante el Entrenamiento')
+    plt.xlabel('Épocas')
+    plt.ylabel('Pérdida')
+    plt.legend()
+
+    # Precisión
+    plt.subplot(1, 2, 2)
+    plt.plot(history.history['accuracy'], label='Precisión de Entrenamiento')
+    plt.plot(history.history['val_accuracy'], label='Precisión de Validación')
+    plt.title('Precisión durante el Entrenamiento')
+    plt.xlabel('Épocas')
+    plt.ylabel('Precisión')
+    plt.legend()
+
+    plt.tight_layout()
+    plt.show()
+
 def ejecutar_modelo_cnn(data_path="src/",
                    models_path="models/"):
   # 📦 Cargar datos de entrenamiento y prueba
@@ -114,28 +138,6 @@ def ejecutar_modelo_cnn(data_path="src/",
   model_path = os.path.join(models_path, "cnn.pkl")
   joblib.dump(model_cnn, model_path)
   print(f"📦 Modelo guardado en: {model_path}")
-
-  plt.figure(figsize=(12, 4))
-  # Pérdida
-  plt.subplot(1, 2, 1)
-  plt.plot(history.history['loss'], label='Pérdida de Entrenamiento')
-  plt.plot(history.history['val_loss'], label='Pérdida de Validación')
-  plt.title('Pérdida durante el Entrenamiento')
-  plt.xlabel('Épocas')
-  plt.ylabel('Pérdida')
-  plt.legend()
-
-  # Precisión
-  plt.subplot(1, 2, 2)
-  plt.plot(history.history['accuracy'], label='Precisión de Entrenamiento')
-  plt.plot(history.history['val_accuracy'], label='Precisión de Validación')
-  plt.title('Precisión durante el Entrenamiento')
-  plt.xlabel('Épocas')
-  plt.ylabel('Precisión')
-  plt.legend()
-
-  plt.tight_layout()
-  plt.show()
 
   # 6. Evaluación y Comparación del Modelo
 
