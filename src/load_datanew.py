@@ -326,7 +326,7 @@ def process_dataset(df):
 
     plt.figure(figsize=(10, 6))
     plt.title('Conteo de Emociones', size=16)
-    sns.countplot(data=df, x='Emotions', order=df['Emotions'].value_counts().index)
+    sns.countplot(data=features_df, x='Emotions', order=features_df['Emotions'].value_counts().index)
     plt.ylabel('Conteo', size=12)
     plt.xlabel('Emociones', size=12)
     sns.despine()
