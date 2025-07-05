@@ -25,6 +25,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Conv1D, MaxPooling1D, Flatten, Dropout, BatchNormalization
 from keras.optimizers import Adam
 from keras.regularizers import l2
+from models.metrics import metrics_values
 
 import joblib
 
