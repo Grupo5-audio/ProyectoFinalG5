@@ -1,3 +1,19 @@
+# PROGRAMA QUE ENTRENA UNA RED NEURONAL CNN:
+#1. SE CARGA LOS DATOS TRAIN Y TEST GENERADOS PREVIAMENTE
+#2. LA ARQUITECTURA DE LA RN ES:
+# Capa de entrada corresponde a una señal 1D multicanal
+# Primera capa convolucional (Conv1D)
+# Filtros: 128, Tamaño del kernel: 5, Activación: ReLU
+# Normalización por lotes (BatchNormalization)
+# Reducción de dimensionalidad (MaxPooling1D)
+# Regularización (Dropout(0.3))
+# Segunda y tercera capas convolucionales
+# Segunda: 64 filtros, kernel 5. Tercera: 32 filtros, kernel 3.
+# Capa de aplanamiento Convierte la salida 3D en un vector para conectar con las capas densas.
+# Capa densa 64 neuronas completamente conectadas con regularización L2.
+# Capa de salida con 6 neuronas, una por cada clase de emoción
+
+
 # Importación de librerías y dataset
 import kagglehub
 import pandas as pd
