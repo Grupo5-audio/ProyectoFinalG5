@@ -9,20 +9,25 @@ from models.metrics import metrics_values
 
 # Define the CategoricalFocalLoss class directly
 class CategoricalFocalLoss(tf.keras.losses.Loss):
-    def __init__(self, gamma=2.0, alpha=0.25, reduction=tf.keras.losses.Reduction.SUM_OVER_BATCH_SIZE, name='categorical_focal_loss'):
+  def __init__(self, gamma=2.0, alpha=0.25, reduction=tf.keras.losses.Reduction.SUM_OVER_BATCH_SIZE, name='categorical_focal_loss'):
         super().__init__(reduction=reduction, name=name)
         self.gamma = gamma
         self.alpha = alpha
 
-    def call(self, y_true, y_pred):
+  def call(self, y_true, y_pred):
         epsilon = tf.keras.backend.epsilon()
         y_pred = tf.clip_by_value(y_pred, epsilon, 1. - epsilon)
         cross_entropy = -y_true * tf.math.log(y_pred)
         loss = self.alpha * tf.pow(1 - y_pred, self.gamma) * cross_entropy
         return tf.reduce_sum(loss, axis=-1)
 
-    def get_config(self):
+  def get_config(self):
         config = super().get_config()
+        config.update({
+            "gamma": self.gamma,
+            "alpha": self.alpha
+        })
+        return config
 
 
 def run_mlp(
