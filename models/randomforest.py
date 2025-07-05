@@ -52,7 +52,7 @@ def run_random_forest(
 
     print("🔍 Buscando mejores hiperparámetros con GridSearchCV...")
     grid = GridSearchCV(
-        estimator=RandomForestClassifier(random_state=42),
+        estimator=RandomForestClassifier(random_state=0),
         param_grid=param_grid,
         cv=3,
         scoring='accuracy',
