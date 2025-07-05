@@ -1,3 +1,15 @@
+# PROGRAMA QUE ENTRENA UNA RED NEURONAL MODELO SECUENCIAL:
+#1. SE CARGA LOS DATOS TRAIN Y TEST GENERADOS PREVIAMENTE
+#2. LA ARQUITECTURA DE LA RN ES:
+# Capa de entrada en un vector 1D
+# Capa de aplanamiento convierte el vector de entrada de 2D a 1D
+# Capa densa con 256 neuronas y función de activación ReLU
+# Capa de regularización, desactiva aleatoriamente el 50% de las
+# neuronas durante cada epoca de entrenamiento
+# Capa de salida con 6 neuronas, una por cada clase de emoción
+# Utiliza softmax para producir una distribución de probabilidad sobre las clases.
+
+
 import joblib
 import numpy as np
 import os
@@ -31,7 +43,7 @@ def run_rn(
     y_train_labels = np.argmax(y_train, axis=1)
     y_test_labels = np.argmax(y_test, axis=1)
 
-    # 🚀 Entrenar modelo SVM (kernel RBF por defecto)
+    # 🚀 Entrenar modelo RN 
     model = Sequential()
     model.add(Input(shape=(x_train.shape[1], 1)))  # Mantener la forma de entrada
     model.add(Flatten())
