@@ -50,22 +50,6 @@ def ejecutar_modelo_cnn(data_path="src/",
   y_train_labels = np.argmax(y_train, axis=1)
   y_test_labels = np.argmax(y_test, axis=1)
 
-  # Definición del modelo
-  # model = Sequential()
-  # model.add(Input(shape=(x_train.shape[1], 1)))
-
-#   # Aplicando Regularización L2
-#   model = Sequential()
-#   model.add(Input(shape=(x_train.shape[1], 1)))
-#   model.add(Dense(256, activation='relu', kernel_regularizer=l2(0.001)))
-#   model.add(Dropout(0.3))
-#   model.add(Dense(128, activation='relu', kernel_regularizer=l2(0.001)))
-#   model.add(Dropout(0.3))
-#   model.add(Dense(64, activation='relu', kernel_regularizer=l2(0.001)))
-#   model.add(Dropout(0.3))
-#   model.add(Flatten())
-#   model.add(Dense(6, activation='softmax'))
-
   print("Forma de x_train:", x_train.shape)
 
   if len(x_train.shape) == 2:
@@ -113,7 +97,7 @@ def ejecutar_modelo_cnn(data_path="src/",
 
   
   model_cnn = model
-  tf.keras.utils.plot_model(model_cnn, rankdir='LR',show_dtype=True)
+  # tf.keras.utils.plot_model(model_cnn, rankdir='LR',show_dtype=True)
 
 # Entrenamiento
   history = model_cnn.fit(
@@ -124,18 +108,11 @@ def ejecutar_modelo_cnn(data_path="src/",
         validation_data=(x_test, y_test),
         callbacks=[early_stop, reduce_lr]
     )
-  
-#   model_cnn = model
-#   tf.keras.utils.plot_model(model_cnn, rankdir='LR',show_dtype=True)
-#   rlrp = ReduceLROnPlateau(monitor='loss', factor=0.4, verbose=0, patience=2, min_lr=0.0000000005)
-#   history=model_cnn.fit(x_train, y_train, batch_size=64, epochs=50, validation_data=(x_test, y_test), callbacks=[rlrp])
 
   # 💾 Guardar modelo entrenado
   model_path = os.path.join(models_path, "cnn.pkl")
   joblib.dump(model_cnn, model_path)
   print(f"📦 Modelo guardado en: {model_path}")
-  
-  #grafico_perdida(history)
 
   plt.figure(figsize=(12, 4))
   # Pérdida
@@ -181,19 +158,9 @@ def ejecutar_modelo_cnn(data_path="src/",
   df['Actual Labels'] = encoder.inverse_transform(y_test).flatten()
   df.head(10)
 
-  # Matriz de confusión
-  cm = confusion_matrix(encoder.inverse_transform(y_test), y_pred)
-  plt.figure(figsize=(12, 10))
-  cm_df = pd.DataFrame(cm, index=encoder.categories_[0], columns=encoder.categories_[0])
-  sns.heatmap(cm_df, linecolor='white', cmap='Blues', linewidth=1, annot=True, fmt='')
-  plt.title('Matriz de confusión', size=20)
-  plt.xlabel('Predicción', size=14)
-  plt.ylabel('Real', size=14)
-  plt.show()
+  print("📈 Evaluación final en conjunto de prueba:")
+  metrics_values(encoder.inverse_transform(y_test), y_pred, class_names)
 
-  # Informe de clasificación
-  print(classification_report(encoder.inverse_transform(y_test), y_pred, zero_division=0))
-
-  return model_cnn, x_test
+  return model_cnn, x_test, feature_names
 
 #ejecutar_modelo_cnn()
