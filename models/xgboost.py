@@ -53,7 +53,7 @@ def run_xgboost(
     cv=3,
     n_jobs=-1,
     verbose=1,
-    random_state=42
+    random_state=0
     )
 
     grid.fit(x_combined, y_combined)
