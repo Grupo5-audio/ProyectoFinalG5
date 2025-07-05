@@ -190,7 +190,7 @@ def load_savee_dataset(savee_path):
     lista_emociones = df['Emotions'].unique().tolist()
     return df, total, emociones_unicas, lista_emociones
 
-#función que explora los dato. Crea un gráfico de barras con las emociones identificadas
+#función que explora los datos. Crea un gráfico de barras con las emociones identificadas
 def explore_data(df):
     df.to_csv("src/data_path.csv", index=False)
     #print("DF en explore_data")
@@ -307,7 +307,7 @@ def process_dataset(df):
     print("Obtiene caracterisitacas.... ")
     for path, emotion in zip(df.Path, df.Emotions):
         feature = get_features(path)
-        print(f"path: {path} emocion: {emotion} feature")
+        #print(f"path: {path} emocion: {emotion} feature")
         for ele in feature:
             X.append(ele)
             Y.append(emotion)
@@ -323,6 +323,15 @@ def process_dataset(df):
 
     # Guardar a CSV
     features_df.to_csv('src/features.csv', index=False)
+
+    plt.figure(figsize=(10, 6))
+    plt.title('Conteo de Emociones', size=16)
+    sns.countplot(data=df, x='Emotions', order=df['Emotions'].value_counts().index)
+    plt.ylabel('Conteo', size=12)
+    plt.xlabel('Emociones', size=12)
+    sns.despine()
+    plt.show()
+
 
     return features_df
 
