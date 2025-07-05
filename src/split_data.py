@@ -16,7 +16,7 @@ def split_data(X, Y, test_size=0.2, val_size=0.25):
     """
     # Primero dividimos en entrenamiento y el resto (prueba + validación)
     X_train, X_temp, Y_train, Y_temp = train_test_split(
-        X, Y, test_size=test_size, random_state=42, stratify=Y
+        X, Y, test_size=test_size, random_state=0, stratify=Y
     )
 
     # Luego dividimos el resto en prueba y validación
