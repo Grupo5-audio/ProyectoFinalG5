@@ -24,7 +24,7 @@ def split_data(X, Y, test_size=0.2, val_size=0.25):
     val_size_temp = val_size / (1 - test_size)
 
     X_test, X_val, Y_test, Y_val = train_test_split(
-        X_temp, Y_temp, test_size=val_size_temp, random_state=42, stratify=Y_temp
+        X_temp, Y_temp, test_size=val_size_temp, random_state=0, stratify=Y_temp
     )
 
     print("✅ Datos divididos:")
