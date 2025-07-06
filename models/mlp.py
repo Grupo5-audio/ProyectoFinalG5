@@ -30,6 +30,31 @@ class CategoricalFocalLoss(tf.keras.losses.Loss):
         return config
 
 
+def grafico_perdida(history):
+    plt.figure(figsize=(12, 4))
+
+    # Pérdida
+    plt.subplot(1, 2, 1)
+    plt.plot(history.history['loss'], label='Pérdida de Entrenamiento')
+    plt.plot(history.history['val_loss'], label='Pérdida de Validación')
+    plt.title('Pérdida durante el Entrenamiento')
+    plt.xlabel('Épocas')
+    plt.ylabel('Pérdida')
+    plt.legend()
+
+    # Precisión
+    plt.subplot(1, 2, 2)
+    plt.plot(history.history['accuracy'], label='Precisión de Entrenamiento')
+    plt.plot(history.history['val_accuracy'], label='Precisión de Validación')
+    plt.title('Precisión durante el Entrenamiento')
+    plt.xlabel('Épocas')
+    plt.ylabel('Precisión')
+    plt.legend()
+
+    plt.tight_layout()
+    plt.show()
+
+
 def run_mlp(
     data_path="src/",
     models_path="models/"
@@ -93,6 +118,8 @@ def run_mlp(
     # ⏱️ Callbacks
     early_stop = callbacks.EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
 
+      
+
     # 🚆 Entrenar
     print("🚀 Entrenando MLP...")
     history = model.fit(
@@ -109,6 +136,10 @@ def run_mlp(
     model.save(model_path)
     print(f"📦 Modelo MLP guardado en: {model_path}")
 
+    # grafico de perdia
+
+    grafico_perdida(history)
+    
     # 🧪 Evaluación en test
     y_pred_probs = model.predict(x_test)
     y_pred_labels = np.argmax(y_pred_probs, axis=1)
