@@ -4,6 +4,7 @@ import librosa
 import numpy as np
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split
+from models.metrics import metrics_values
 
 import os
 import pandas as pd
@@ -307,7 +308,7 @@ def run_pipeline(ravdess_path=None, crema_path=None, tess_path=None, savee_path=
     final_model.summary()
 
     # Entrenar
-    final_model.fit(X_train, y_train, validation_split=0.1, epochs=10, batch_size=4)
+    final_model.fit(X_train, y_train, validation_split=0.1, epochs=5, batch_size=4)
 
 
     # 💾 Guardar modelo entrenado
@@ -317,18 +318,35 @@ def run_pipeline(ravdess_path=None, crema_path=None, tess_path=None, savee_path=
     print(f"📦 Modelo guardado en: {model_path}")
     #grafico_perdida(history)
 
+    data_path="/content/drive/MyDrive/Colab Notebooks/ProyectoFinal/src/"
 
-#Ravdess = "C:/Users/andra/.cache/kagglehub/datasets/uwrfkaggler/ravdess-emotional-speech-audio/versions/1/audio_speech_actors_01-24/"
-#Crema = "C:/Users/andra/.cache/kagglehub/datasets/ejlok1/cremad/versions/1/AudioWAV/"
-#Tess = "C:/Users/andra/.cache/kagglehub/datasets/ejlok1/toronto-emotional-speech-set-tess/versions/1/TESS Toronto emotional speech set data/TESS Toronto emotional speech set data/"
-#Savee = "C:/Users/andra/.cache/kagglehub/datasets/ejlok1/surrey-audiovisual-expressed-emotion-savee/versions/1/ALL/"
+    # 🏷️ Cargar nombres de clases
+    class_labels_path = os.path.join(data_path, "class_labels.npy")
+    if os.path.exists(class_labels_path):
+        class_names = np.load(class_labels_path, allow_pickle=True).tolist()
+        print("✅ Clases cargadas:", class_names)
+    else:
+        raise FileNotFoundError("❌ No se encontró el archivo class_labels.npy.")
+
+
+    # 📈 Evaluación en test
+    y_test_pred = final_model.predict(X_test)
+    print("📈 Evaluación final en conjunto de prueba:")
+    metrics_values(y_test, y_test_pred, class_names)
+
+
+
+Ravdess = "C:/Users/andra/.cache/kagglehub/datasets/uwrfkaggler/ravdess-emotional-speech-audio/versions/1/audio_speech_actors_01-24/"
+Crema = "C:/Users/andra/.cache/kagglehub/datasets/ejlok1/cremad/versions/1/AudioWAV/"
+Tess = "C:/Users/andra/.cache/kagglehub/datasets/ejlok1/toronto-emotional-speech-set-tess/versions/1/TESS Toronto emotional speech set data/TESS Toronto emotional speech set data/"
+Savee = "C:/Users/andra/.cache/kagglehub/datasets/ejlok1/surrey-audiovisual-expressed-emotion-savee/versions/1/ALL/"
 
 # Ejecutar pipeline
-#X, Y = run_pipeline(
-#    ravdess_path=Ravdess,
-#    crema_path=Crema,
-#    tess_path=Tess,
-#    savee_path=Savee
-#)
+X, Y = run_pipeline(
+    ravdess_path=Ravdess,
+    crema_path=Crema,
+    tess_path=Tess,
+    savee_path=Savee
+)
 
 
